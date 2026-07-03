@@ -4,7 +4,7 @@
   "description": "AI Architect Agent",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/index.ts -o dist"
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --outfile=dist/index.js"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@vercel/ncc": "^0.38.1",
-    "typescript": "^5.3.3"
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.3"
   }
 }
