@@ -22,7 +22,10 @@ inputs:
   CUSTOM_PROMPT:
     description: 'Optional: Inject additional custom architectural rules or context into the AI System Prompt.'
     required: false
+  GATEWAY_URL:
+    description: 'Optional: Override the default ArchGuard Cloudflare Gateway URL.'
+    required: false
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
