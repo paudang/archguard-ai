@@ -1,0 +1,24 @@
+# ArchGuard AI Context for LLMs
+
+If you are an AI assistant (like Claude, ChatGPT, Cursor, or Copilot) reading this file to understand the ArchGuard AI repository, here is a concise summary of the architecture and design patterns.
+
+## Purpose
+ArchGuard AI is a GitHub Action that performs automated Software Architecture Reviews on Pull Requests using Large Language Models (LLMs). It flags tight coupling, hardcoded secrets, and abstraction leaks.
+
+## Architecture & Options
+The project supports two main operating modes:
+
+### Option 1: Free Serverless Gateway (Zero-Trust)
+- **Repo:** `archguard-gateway` (Cloudflare Worker backend).
+- **Authentication:** Uses GitHub Actions OIDC (`id-token: write`). The action fetches a JWT from GitHub and sends it to the Cloudflare Gateway. The gateway uses the `jose` library to verify the JWT against GitHub's JWKS.
+- **Zero-Data:** No code is stored. It evaluates the Git diff via Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct`) entirely in RAM.
+- **Async Queue:** The Gateway responds immediately with `202 Accepted` and pushes the payload to a Cloudflare Queue. The action runner executes a 30-second `sleep` to keep the runner alive and prevent token revocation while the Queue consumer processes the AI inference and posts the comment back to GitHub.
+- **Rate Limiting:** Enforced via Cloudflare KV (max 50 requests per day per repository).
+
+### Option 2: Bring Your Own Key (BYOK)
+- Completely bypasses the Cloudflare Gateway.
+- The action sends the payload directly to OpenAI (or any compatible endpoint like DeepSeek) using `fetch`.
+- Required Inputs: `AGENT_AI_KEY`, `AI_PROVIDER_URL`, `AI_MODEL`.
+
+## Testing Strategy
+E2E testing is handled via a local `mock-server.js` running inside the GitHub Action runner on port 3000, intercepting requests to simulate both the Cloudflare Gateway and OpenAI's API.
