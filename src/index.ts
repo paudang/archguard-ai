@@ -18,7 +18,7 @@ async function run() {
         console.log("[ArchGuard] Comment does not tag @archguard-ai. Skipping.");
         return;
       }
-      chatopsContext = `\n\n===========================\nCRITICAL CHATOPS INQUIRY:\nThe developer just asked: "${commentBody}".\n\nYOUR ONLY TASK IS TO REPLY TO THIS COMMENT. DO NOT PERFORM A FULL CODE REVIEW. DO NOT USE THE CHECKLIST. JUST ANSWER THE USER'S QUESTION DIRECTLY AND CONCISELY!`;
+      chatopsContext = `\n\n===========================\nCRITICAL CHATOPS INQUIRY:\nThe developer just commented: "${commentBody}".\n\nYOUR MISSION: If the user is asking a conversational question or saying hello, answer it directly and concisely WITHOUT performing a code review. HOWEVER, if the user explicitly asks you to "re-check", "review again", or "audit", you MUST perform a full architectural code review using the checklist!`;
       console.log(`[ArchGuard] ChatOps triggered for PR #${pull_number}`);
     }
 
