@@ -39,7 +39,7 @@ jobs:
       - name: Create Pull Request
         id: create_pr
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }} # ⚠️ MUST USE A PAT TO TRIGGER OTHER WORKFLOWS
         run: |
           PR_URL=$(gh pr create --title "[E2E] Daily Health Check" --body "Automated PR to verify ArchGuard AI functionality." --base main --head ${{ steps.create_branch.outputs.branch_name }})
           echo "Created PR: $PR_URL"
@@ -68,5 +68,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr close ${{ steps.create_pr.outputs.pr_number }}
+          if [ -n "${{ steps.create_pr.outputs.pr_number }}" ]; then
+            gh pr close ${{ steps.create_pr.outputs.pr_number }}
+          fi
           git push origin --delete ${{ steps.create_branch.outputs.branch_name }} || true
